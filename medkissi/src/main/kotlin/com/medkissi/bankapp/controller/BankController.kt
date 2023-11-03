@@ -12,8 +12,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.lang.IllegalArgumentException
+
 
 @RestController
 @RequestMapping("/api")
@@ -29,6 +34,12 @@ class BankController {
 
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handBadRequest(e:IllegalArgumentException):ResponseEntity<String>{
+        return ResponseEntity(e.message,HttpStatus.BAD_REQUEST)
+
+    }
+
     @GetMapping("/banks")
     fun getBanks ():Collection<Bank>{
         return  service.getBanks()
@@ -37,6 +48,14 @@ class BankController {
     @GetMapping("/banks/{accountNumber}")
     fun getBank(@PathVariable accountNumber:String):Bank{
         return service.getBank(accountNumber)
+    }
+    @PostMapping("/bank")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun addBank(@RequestBody bank: Bank):Bank{
+        return service.addBank(bank)
+
+
+
     }
 
 
